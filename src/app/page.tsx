@@ -29,33 +29,51 @@ export default function Home() {
   };
 
   // Función que engaña a iOS pidiendo permiso de forma síncrona y nativa
-  const handleActivarCamara = async () => {
-    try {
-      setErrorMsg(null);
-      // 1. Pedimos permiso de forma nativa e inmediata en el click
-      const stream =
-        await navigator.mediaDevices.getUserMedia({
-          video: true,
-        });
+const handleActivarCamara = async () => {
+  alert('1. Botón presionado');
+  try {
+    setErrorMsg(null);
 
-      // 2. Apagamos ese stream instantáneamente (ya tenemos el permiso)
-      stream.getTracks().forEach((track) => track.stop());
-
-      // 3. Ahora sí, dejamos que React monte react-webcam
-      setIsCameraActive(true);
-    } catch (error) {
-      if (
-        error instanceof Error ||
-        error instanceof DOMException
-      ) {
-        setErrorMsg(
-          `Permiso denegado: ${error.name} - ${error.message}`,
-        );
-      } else {
-        setErrorMsg(String(error));
-      }
+    if (
+      !navigator.mediaDevices ||
+      !navigator.mediaDevices.getUserMedia
+    ) {
+      alert(
+        'ERROR: navigator.mediaDevices no existe. (Falta HTTPS o iOS lo bloquea de raíz)',
+      );
+      return;
     }
-  };
+
+    alert('2. Pidiendo permisos a iOS...');
+    const stream =
+      await navigator.mediaDevices.getUserMedia({
+        video: true,
+      });
+
+    alert(
+      '3. Permiso concedido. Apagando stream temporal...',
+    );
+    stream.getTracks().forEach((track) => track.stop());
+
+    alert('4. Activando componente React Webcam...');
+    setIsCameraActive(true);
+  } catch (error) {
+    if (
+      error instanceof Error ||
+      error instanceof DOMException
+    ) {
+      alert(
+        `CATCH ERROR: ${error.name} - ${error.message}`,
+      );
+      setErrorMsg(
+        `Permiso denegado: ${error.name} - ${error.message}`,
+      );
+    } else {
+      alert(`CATCH ERROR DESCONOCIDO: ${String(error)}`);
+      setErrorMsg(String(error));
+    }
+  }
+};
 
   const capture = () => {
     const screenshot = webcamRef.current?.getScreenshot();
