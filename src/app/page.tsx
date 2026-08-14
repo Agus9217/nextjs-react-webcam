@@ -8,19 +8,18 @@ export default function Home() {
   const [imageSrc, setImageSrc] = useState<string | null>(
     null,
   );
+  const [errorMsg, setErrorMsg] = useState<string | null>(
+    null,
+  );
   const webcamRef = useRef<Webcam>(null);
 
   const handleUserMediaError = (
     error: string | DOMException,
   ) => {
     if (error instanceof DOMException) {
-      console.error(
-        'ERROR cámara:',
-        error.name,
-        error.message,
-      );
+      setErrorMsg(`${error.name}: ${error.message}`);
     } else {
-      console.error('ERROR cámara:', error);
+      setErrorMsg(String(error));
     }
   };
 
@@ -31,6 +30,11 @@ export default function Home() {
 
   return (
     <div className="flex">
+      {errorMsg && (
+        <div className="bg-red-100 text-red-700 p-4 rounded-md font-bold w-full max-w-md">
+          Error de cámara: {errorMsg}
+        </div>
+      )}
       <div>
         <Webcam
           audio={false}
