@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Puro</title>
+</head>
+<body style="background-color: #1a202c; color: white; font-family: monospace; text-align: center; padding: 50px;">
+    
+    <h2>Test de Hardware y Red</h2>
+    
+    <button id="btn" style="padding: 20px 40px; font-size: 20px; background-color: #3182ce; color: white; border: none; border-radius: 8px;">
+        Tocar Aquí
+    </button>
+    
+    <div id="log" style="margin-top: 30px; color: lime; font-size: 16px; white-space: pre-wrap;"></div>
+
+    <script>
+        document.getElementById('btn').onclick = async () => {
+            const log = document.getElementById('log');
+            log.innerText = '1. Botón presionado.\n';
+            log.innerText += '2. Protocolo: ' + window.location.protocol + '\n';
+            
+            try {
+                if (!navigator.mediaDevices) {
+                    log.innerText += '❌ navigator.mediaDevices NO existe (Falta HTTPS).\n';
+                    return;
+                }
+                
+                log.innerText += '3. Pidiendo permisos...\n';
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                log.innerText += '🟢 ¡Cámara activada con éxito!\n';
+                
+                // Apagamos la cámara al instante para no dejarla prendida en el test
+                stream.getTracks().forEach(track => track.stop());
+                
+            } catch (error) {
+                log.innerText += '❌ Error: ' + error.name + ' - ' + error.message;
+            }
+        };
+    </script>
+</body>
+</html>
